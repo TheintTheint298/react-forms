@@ -1,9 +1,60 @@
+import { useState } from "react";
+
 function App() {
-  const handleInput = () => {};
+  const [userInfo, setUserInfo] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    dob: "",
+    gender: "",
+  });
+
+  const [prompts, setPrompts] = useState([
+    {
+      prompt: "",
+      answer: "",
+      timestamp: new Date().getTime(),
+    },
+  ]);
+
+  console.log(userInfo);
+  console.log(prompts);
+
+  const handleInput = (e) => {
+    const { name, value } = e.target;
+    setUserInfo({
+      ...userInfo,
+      [name]: value,
+    });
+  };
+
+  const handlePrompt = (e, i) => {
+    const { name, value } = e.target;
+    let newPrompts = [...prompts];
+    newPrompts[i][name] = value;
+    setPrompts(newPrompts);
+  };
+
+  const handleAddPrompt = () => {
+    setPrompts([
+      ...prompts,
+      {
+        prompt: "",
+        answer: "",
+        timestamp: new Date().getTime(),
+      },
+    ]);
+  };
+
+  const handleDelete = (i) => {
+    let deletePrompts = [...prompts];
+    deletePrompts.splice(i, 1);
+    setPrompts(deletePrompts);
+  };
   return (
     <>
       <h1 className="text-3xl text-center my-4 py-2">React Forms</h1>
-      <form className="w-5/6 max-w-md mx-auto">
+      <form className="w-5/6 max-w-xl mx-auto pt-4 pb-10">
         <fieldset className="flex flex-col gap-2 border py-1 px-4">
           <legend className="text-2xl font-semibold mb-2 text-gray-500">
             About You
@@ -60,6 +111,7 @@ function App() {
               className="w-3/5 border rounded text-lg leading-tight py-3 px-2 mt-4 mb-2 focus:outline-indigo-200"
               id="gender"
               name="gender"
+              onChange={handleInput}
             >
               <option value="">Gender</option>
               <option value="Male">Male</option>
@@ -68,6 +120,68 @@ function App() {
               <option value="FTM">FTM</option>
               <option value="Non-Binary">Non-binary</option>
             </select>
+          </div>
+        </fieldset>
+        <fieldset className="flex flex-col gap-2 border py-1 px-4">
+          <legend className="text-2xl font-semibold mb-2 text-gray-500">
+            Prompts
+          </legend>
+          {prompts.map((prompt, i) => (
+            <div key={prompt.timestamp} className="flex flex-col">
+              <label className="text-3xl font-semibold">Select a prompt</label>
+              <div className="flex flex-row items-center gap-2">
+                <select
+                  className="w-full border rounded text-lg leading-tight py-3 px-2 mt-4 mb-2 focus:outline-indigo-200"
+                  id="prompt"
+                  name="prompt"
+                  onChange={(e) => handlePrompt(e, i)}
+                >
+                  <option>Select Prompt</option>
+                  <option value="Dating me is like...">
+                    Dating me is like...
+                  </option>
+                  <option value="Facts about me that surprises people:">
+                    Facts about me that surprises people:
+                  </option>
+                  <option value="I want someone who...">
+                    I want someone who...
+                  </option>
+                  <option value="I spend most of money on:">
+                    I spend most of money on:
+                  </option>
+                  <option value="The most spontaneous thing I've done:">
+                    The most spontaneous thing I've done:
+                  </option>
+                  <option value="We're the same type of weird if...">
+                    We're the same type of weird if...
+                  </option>
+                </select>
+                <button
+                  className="border bg-red-400 py-2.5 px-4 rounded-lg text-white font-bold text-xl"
+                  type="button"
+                  onClick={() => handleDelete(i)}
+                >
+                  -
+                </button>
+              </div>
+              <textarea
+                className="border border-dashed py-3 px-2 mb-4 focus:outline-indigo-200"
+                id="answer"
+                name="answer"
+                rows={5}
+                placeholder="Let your true color shine through"
+                onChange={(e) => handlePrompt(e, i)}
+              />
+            </div>
+          ))}
+          <div className="w-full flex justify-center">
+            <button
+              className="border bg-indigo-400 py-1 px-2 rounded-lg text-white font-bold text-xl"
+              type="button"
+              onClick={handleAddPrompt}
+            >
+              Add Prompt
+            </button>
           </div>
         </fieldset>
       </form>
